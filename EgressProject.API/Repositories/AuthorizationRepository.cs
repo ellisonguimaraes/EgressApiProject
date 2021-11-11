@@ -4,10 +4,11 @@ using EgressProject.API.Models.Utils;
 using EgressProject.API.Models;
 using EgressProject.API.Data;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace EgressProject.API.Repositories
 {
-    public class AuthorizationRepository : IEntityRepository<Authorization>
+    public class AuthorizationRepository : IAuthorizationRepository
     {
         private readonly ApplicationDbContext _context;
 
@@ -16,14 +17,22 @@ namespace EgressProject.API.Repositories
             _context = context;
         }
 
+        public Authorization GetByRefreshToken(string refreshToken)
+            => _context.Authorizations
+                .Include(au => au.User)
+                .Where(au => au.RefreshToken.Equals(refreshToken))
+                .SingleOrDefault();
+
         public Authorization GetById(int id) 
             => _context.Authorizations
-                    .Where(au => au.Id == au.Id)
-                    .SingleOrDefault();
+                .Include(au => au.User)
+                .Where(au => au.Id == au.Id)
+                .SingleOrDefault();
         
         public PagedList<Authorization> GetPaginate(PaginationParameters paginationParameters)
             => new PagedList<Authorization>(
                 _context.Authorizations
+                    .Include(au => au.User)
                     .OrderBy(au => au.Id),
                 paginationParameters.PageNumber,
                 paginationParameters.PageSize

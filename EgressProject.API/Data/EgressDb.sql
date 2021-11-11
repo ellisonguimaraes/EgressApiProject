@@ -6,6 +6,7 @@ CREATE TABLE "Authorization"(
     "id" SERIAL NOT NULL,
     "token" VARCHAR(500) NOT NULL,
     "ip_address" VARCHAR(20) NOT NULL,
+    "created_date" DATE NOT NULL,
     "refresh_token" VARCHAR(255) NOT NULL,
     "refresh_token_expiry_time" DATE NOT NULL,
     "is_valid" BOOLEAN NOT NULL,
