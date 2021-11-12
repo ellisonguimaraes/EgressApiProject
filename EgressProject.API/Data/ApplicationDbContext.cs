@@ -1,3 +1,4 @@
+using EgressProject.API.Data.Mapping;
 using EgressProject.API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,19 @@ namespace EgressProject.API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            new AreaEntityTypeConfiguration().Configure(modelBuilder.Entity<Area>());
+            new AuthorizationEntityTypeConfiguration().Configure(modelBuilder.Entity<Authorization>());
+            new CourseEntityTypeConfiguration().Configure(modelBuilder.Entity<Course>());
+            new EmploymentEntityTypeConfiguration().Configure(modelBuilder.Entity<Employment>());
+            new EspecializationEntityTypeConfiguration().Configure(modelBuilder.Entity<Especialization>());
+            new HighlightsEntityTypeConfiguration().Configure(modelBuilder.Entity<Highlights>());
+            new JobAdvertisementEntityTypeConfiguration().Configure(modelBuilder.Entity<JobAdvertisement>());
+            new NewsEntityTypeConfiguration().Configure(modelBuilder.Entity<News>());
+            new PersonCourseEntityTypeConfiguration().Configure(modelBuilder.Entity<PersonCourse>());
+            new PersonEntityTypeConfiguration().Configure(modelBuilder.Entity<Person>());
+            new TestimonyEntityTypeConfiguration().Configure(modelBuilder.Entity<Testimony>());
+            new UserEntityTypeConfiguration().Configure(modelBuilder.Entity<User>());
+
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -26,6 +26,8 @@ using EgressProject.API.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using EgressProject.API.Business.Interfaces;
+using EgressProject.API.Business;
 
 namespace EgressProject.API
 {
@@ -123,6 +125,9 @@ namespace EgressProject.API
             });
 
             services.AddScoped<IJwTUtils, JwTUtils>();
+
+            // Dependency Injection Business Class
+            services.AddScoped<IUserBusiness, UserBusiness>();
 
             // Dependency Injection Repositories
             services.AddScoped<IUserRepository, UserRepository>();

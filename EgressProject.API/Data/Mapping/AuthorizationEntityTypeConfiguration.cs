@@ -20,6 +20,7 @@ namespace EgressProject.API.Data.Mapping
             builder.Property(au => au.RefreshToken).HasColumnName("refresh_token").HasMaxLength(255).IsRequired();
             builder.Property(au => au.RefreshTokenExpiryTime).HasColumnName("refresh_token_expiry_time").IsRequired();
             builder.Property(au => au.IsValid).HasColumnName("is_valid").IsRequired();
+            builder.Property(au => au.UserId).HasColumnName("user_id").IsRequired();
 
             // Relationship Configure
             builder.HasOne(au => au.User)

@@ -1,9 +1,13 @@
 using System;
+using System.Text;
 using EgressProject.API.Business.Interfaces;
 using EgressProject.API.Models;
+using EgressProject.API.Models.InputModel;
 using EgressProject.API.Models.Utils;
 using EgressProject.API.Repositories.Interfaces;
 using EgressProject.API.Services.Auth;
+using System.Security.Cryptography;
+using EgressProject.API.Models.Enums;
 
 namespace EgressProject.API.Business
 {
@@ -77,6 +81,20 @@ namespace EgressProject.API.Business
             _authorizationRepository.Update(authorization);
             
             return true;
+        }
+        
+        public User Register(RegisterInputModel registerInputModel)
+        {
+            if(_userRepository.GetByEmail(registerInputModel.Email) != null) return null;
+
+            User user = _userRepository.Create(new User{
+                Email = registerInputModel.Email,
+                Password = BitConverter.ToString(new SHA256CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(registerInputModel.Password))),
+                Role = Role.Egress,
+                IsValidated = true
+            });
+
+            return user;
         }
     }
 }

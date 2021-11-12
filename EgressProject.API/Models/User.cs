@@ -11,7 +11,7 @@ namespace EgressProject.API.Models
         public bool IsValidated { get; set; }
 
         // Relationship
-        public int PersonId { get; set; }
+        public int? PersonId { get; set; }
         public virtual Person Person { get; set; }
 
         public virtual IEnumerable<Authorization> Authorizations { get; set; }

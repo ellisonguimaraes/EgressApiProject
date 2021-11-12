@@ -18,10 +18,10 @@ ALTER TABLE "Authorization" ADD PRIMARY KEY("id");
 CREATE TABLE "User"(
     "id" SERIAL NOT NULL,
     "email" VARCHAR(100) NOT NULL,
-    "password" VARCHAR(25) NOT NULL,
+    "password" VARCHAR(256) NOT NULL,
     "role" INTEGER NOT NULL,
     "is_validated" BOOLEAN NOT NULL,
-    "person_id" INTEGER NOT NULL
+    "person_id" INTEGER
 );
 ALTER TABLE "User" ADD PRIMARY KEY("id");
 ALTER TABLE "User" ADD CONSTRAINT "user_email_unique" UNIQUE("email");
