@@ -10,6 +10,10 @@ namespace EgressProject.API.Business.Interfaces
         Token RefreshToken(Token token, string ipAddress);
         bool RevokeToken(Token token);
         User Register(RegisterInputModel registerInputModel);
+        PagedList<User> GetPaginate(PaginationParameters paginationParameters);
+        User GetById(int id);
+        User Update(User user);
+        bool Delete(int id);
     }
 
     

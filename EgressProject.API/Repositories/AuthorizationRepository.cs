@@ -26,7 +26,7 @@ namespace EgressProject.API.Repositories
         public Authorization GetById(int id) 
             => _context.Authorizations
                 .Include(au => au.User)
-                .Where(au => au.Id == au.Id)
+                .Where(au => au.Id == id)
                 .SingleOrDefault();
         
         public PagedList<Authorization> GetPaginate(PaginationParameters paginationParameters)

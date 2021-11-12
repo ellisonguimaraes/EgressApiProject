@@ -16,14 +16,17 @@ namespace EgressProject.API.Business
         private readonly IAuthorizationRepository _authorizationRepository;
         private readonly IUserRepository _userRepository;
         private readonly IJwTUtils _jwtUtils;
+        private readonly TokenConfiguration _tokenConfiguration;
 
         public UserBusiness(IUserRepository userRepository, 
                             IAuthorizationRepository authorizationRepository, 
-                            IJwTUtils jwtUtils)
+                            IJwTUtils jwtUtils,
+                            TokenConfiguration tokenConfiguration)
         {
             _userRepository = userRepository;
             _authorizationRepository = authorizationRepository;
             _jwtUtils = jwtUtils;
+            _tokenConfiguration = tokenConfiguration;
         }
         
         public Token Authenticate(Login login, string ipAddress)
@@ -39,7 +42,7 @@ namespace EgressProject.API.Business
                 IpAddress = ipAddress,
                 CreatedDate = DateTime.Parse(token.CreatedDate),
                 RefreshToken = token.RefreshToken,
-                RefreshTokenExpiryTime = DateTime.Parse(token.ExpirationDate),
+                RefreshTokenExpiryTime = DateTime.Now.AddDays(_tokenConfiguration.DaysToExpiry),
                 IsValid = true,
                 UserId = user.Id
             };
@@ -61,7 +64,7 @@ namespace EgressProject.API.Business
             authorization.IpAddress = ipAddress;
             authorization.CreatedDate = DateTime.Parse(newToken.CreatedDate);
             authorization.RefreshToken = newToken.RefreshToken;
-            authorization.RefreshTokenExpiryTime = DateTime.Parse(newToken.ExpirationDate);
+            authorization.RefreshTokenExpiryTime = DateTime.Now.AddDays(_tokenConfiguration.DaysToExpiry);
             authorization.IsValid = true;
             authorization.UserId = authorization.User.Id;
 
@@ -96,5 +99,17 @@ namespace EgressProject.API.Business
 
             return user;
         }
+
+        public PagedList<User> GetPaginate(PaginationParameters paginationParameters)
+            => _userRepository.GetPaginate(paginationParameters);
+
+        public User GetById(int id)
+            => _userRepository.GetById(id);
+
+        public User Update(User user)
+            => _userRepository.Update(user);
+
+        public bool Delete(int id)
+            => _userRepository.Delete(id);
     }
 }

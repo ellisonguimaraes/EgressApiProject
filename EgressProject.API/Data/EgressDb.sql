@@ -6,9 +6,9 @@ CREATE TABLE "Authorization"(
     "id" SERIAL NOT NULL,
     "token" VARCHAR(500) NOT NULL,
     "ip_address" VARCHAR(20) NOT NULL,
-    "created_date" DATE NOT NULL,
+    "created_date" TIMESTAMP NOT NULL,
     "refresh_token" VARCHAR(255) NOT NULL,
-    "refresh_token_expiry_time" DATE NOT NULL,
+    "refresh_token_expiry_time" TIMESTAMP NOT NULL,
     "is_valid" BOOLEAN NOT NULL,
     "user_id" INTEGER NOT NULL
 );
@@ -68,7 +68,7 @@ CREATE TABLE "JobAdvertisement"(
     "email" VARCHAR(100) NOT NULL,
     "phone_number" VARCHAR(20) NOT NULL,
     "link" VARCHAR(500) NULL,
-    "date_limit" DATE NOT NULL,
+    "date_limit" TIMESTAMP NOT NULL,
     "city" VARCHAR(50) NOT NULL,
     "state" VARCHAR(50) NOT NULL,
     "country" VARCHAR(50) NOT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE "News"(
     "id" SERIAL NOT NULL,
     "title" VARCHAR(255) NOT NULL,
     "author" VARCHAR(255) NOT NULL,
-    "post_date" DATE NOT NULL,
+    "post_date" TIMESTAMP NOT NULL,
     "img_src" VARCHAR(255) NULL,
     "content" TEXT NOT NULL,
     "user_id" INTEGER NOT NULL
@@ -116,7 +116,7 @@ ALTER TABLE "Highlights" ADD PRIMARY KEY("id");
 CREATE TABLE "Testimony"(
     "id" SERIAL NOT NULL,
     "content" TEXT NOT NULL,
-    "post_date" DATE NOT NULL,
+    "post_date" TIMESTAMP NOT NULL,
     "person_id" INTEGER NOT NULL
 );
 ALTER TABLE "Testimony" ADD PRIMARY KEY("id");

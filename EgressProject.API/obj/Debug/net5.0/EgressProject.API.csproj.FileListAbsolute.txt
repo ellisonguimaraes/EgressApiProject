@@ -60,3 +60,8 @@ C:\Users\ellis\EgressProject\EgressProject.API\bin\Debug\net5.0\Microsoft.Identi
 C:\Users\ellis\EgressProject\EgressProject.API\bin\Debug\net5.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\ellis\EgressProject\EgressProject.API\bin\Debug\net5.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\ellis\EgressProject\EgressProject.API\bin\Debug\net5.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\ellis\EgressProject\EgressProject.API\bin\Debug\net5.0\FluentValidation.dll
+C:\Users\ellis\EgressProject\EgressProject.API\bin\Debug\net5.0\FluentValidation.AspNetCore.dll
+C:\Users\ellis\EgressProject\EgressProject.API\bin\Debug\net5.0\FluentValidation.DependencyInjectionExtensions.dll
+C:\Users\ellis\EgressProject\EgressProject.API\bin\Debug\net5.0\AutoMapper.dll
+C:\Users\ellis\EgressProject\EgressProject.API\bin\Debug\net5.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

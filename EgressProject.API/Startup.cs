@@ -28,6 +28,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using EgressProject.API.Business.Interfaces;
 using EgressProject.API.Business;
+using FluentValidation;
+using EgressProject.API.Validators;
+using FluentValidation.AspNetCore;
+using EgressProject.API.Models.InputModel;
 
 namespace EgressProject.API
 {
@@ -76,7 +80,14 @@ namespace EgressProject.API
                 // Ignore Loop Handling .Include()
                 .AddNewtonsoftJson(
                     options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-                );
+                )
+                .AddFluentValidation(option => {
+                    option.DisableDataAnnotationsValidation = true;
+                    option.RegisterValidatorsFromAssemblyContaining<Startup>();
+                });
+
+            // AutoMapper Configure
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             services.AddSwaggerGen(c =>
             {
@@ -125,6 +136,11 @@ namespace EgressProject.API
             });
 
             services.AddScoped<IJwTUtils, JwTUtils>();
+
+            // Dependency Injection Validators
+            services.AddScoped<IValidator<Login>, LoginValidator>();
+            services.AddScoped<IValidator<RegisterInputModel>, RegisterInputModelValidator>();
+            services.AddScoped<IValidator<TokenInputModel>, TokenInputModelValidator>();
 
             // Dependency Injection Business Class
             services.AddScoped<IUserBusiness, UserBusiness>();
