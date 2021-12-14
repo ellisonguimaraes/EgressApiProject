@@ -144,6 +144,9 @@ namespace EgressProject.API
 
             // Dependency Injection Business Class
             services.AddScoped<IUserBusiness, UserBusiness>();
+            services.AddScoped<IAuthenticateBusiness, AuthenticateBusiness>();
+            services.AddScoped<IPersonBusiness, PersonBusiness>();
+            services.AddScoped<IEmploymentBusiness, EmploymentBusiness>();
 
             // Dependency Injection Repositories
             services.AddScoped<IUserRepository, UserRepository>();

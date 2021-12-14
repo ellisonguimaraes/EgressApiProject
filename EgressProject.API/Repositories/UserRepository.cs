@@ -6,6 +6,7 @@ using EgressProject.API.Data;
 using EgressProject.API.Models;
 using EgressProject.API.Models.Utils;
 using EgressProject.API.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EgressProject.API.Repositories
 {
@@ -20,12 +21,14 @@ namespace EgressProject.API.Repositories
 
         public User GetById(int id)
             => _context.Users
+                .Include(user => user.Authorizations)
                 .Where(user => user.Id == id)
                 .SingleOrDefault();
 
         public PagedList<User> GetPaginate(PaginationParameters paginationParameters)
             => new PagedList<User>(
                 _context.Users
+                    .Include(user => user.Authorizations)
                     .OrderBy(user => user.Id),
                 paginationParameters.PageNumber,
                 paginationParameters.PageSize
@@ -33,6 +36,7 @@ namespace EgressProject.API.Repositories
 
         public User GetByEmail(string email)
             => _context.Users
+                .Include(user => user.Authorizations)
                 .Where(user => user.Email.ToLower().Equals(email.ToLower()))
                 .SingleOrDefault();
 
@@ -40,6 +44,7 @@ namespace EgressProject.API.Repositories
         {
             var passwordEncripted = new SHA256CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(password));
             return _context.Users
+                .Include(user => user.Authorizations)
                 .Where(user => user.Email.ToLower().Equals(email.ToLower()) 
                                 && user.Password.Equals(BitConverter.ToString(passwordEncripted)))
                 .SingleOrDefault();

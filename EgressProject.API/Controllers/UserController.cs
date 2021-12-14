@@ -1,7 +1,6 @@
 using System.Text.Json;
 using AutoMapper;
 using EgressProject.API.Business.Interfaces;
-using EgressProject.API.Models;
 using EgressProject.API.Models.InputModel;
 using EgressProject.API.Models.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -21,78 +20,50 @@ namespace EgressProject.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost]
-        [Route("signin")]
-        public IActionResult Signin([FromBody] Login login)
-        {
-            string ipAddress = HttpContext.Connection.RemoteIpAddress.ToString();
-
-            Token token = _userBusiness.Authenticate(login, ipAddress);
-
-            if (token == null) return BadRequest("Não foi possível realizar a autenticação");
-
-            return Ok(token);
-        }
-
-        [HttpPost]
-        [Route("refreshtoken")]
-        public IActionResult RefreshToken([FromBody] TokenInputModel tokenInputModel)
-        {
-            string ipAddress = HttpContext.Connection.RemoteIpAddress.ToString();
-
-            Token token = _userBusiness.RefreshToken(_mapper.Map<Token>(tokenInputModel), ipAddress);
-
-            if (token == null) return BadRequest("Refresh Token inválido");
-
-            return Ok(token);
-        }
-
-        [HttpPost]
-        [Route("register")]
-        public IActionResult Register([FromBody] RegisterInputModel registerInputModel)
-        {
-            User user = _userBusiness.Register(registerInputModel);
-
-            if (user == null) return BadRequest("Registro não pode ser efetuado");
-
-            string ipAddress = HttpContext.Connection.RemoteIpAddress.ToString();
-
-            Token token = _userBusiness.Authenticate(_mapper.Map<Login>(registerInputModel), ipAddress);
-
-            if (token == null) return BadRequest("Não foi possível realizar a autenticação");
-
-            return Ok(token);
-        }
-
         [HttpGet]
         [Route("{PageNumber}/{PageSize}")]
         public IActionResult Get([FromRoute] PaginationParameters paginationParameters)
         {
-            var users = _userBusiness.GetPaginate(paginationParameters);
+            var usersViewModel = _userBusiness.GetPaginate(paginationParameters);
 
             var metadata = new {
-                users.TotalCount,
-                users.PageSize,
-                users.CurrentPage,
-                users.HasPrevious,
-                users.HasNext,
-                users.TotalPages
+                usersViewModel.TotalCount,
+                usersViewModel.PageSize,
+                usersViewModel.CurrentPage,
+                usersViewModel.HasPrevious,
+                usersViewModel.HasNext,
+                usersViewModel.TotalPages
             };
 
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
 
-            return Ok(users);
+            return Ok(usersViewModel);
         }
 
         [HttpGet]
         [Route("{id}")]
         public IActionResult Get([FromRoute] int id)
         {
-            User user = _userBusiness.GetById(id);
+            var userViewModel = _userBusiness.GetById(id);
 
-            if (user == null) return BadRequest("Usuário inválido");
+            if (userViewModel == null) return BadRequest("Usuário inválido");
 
-            return Ok(user);
+            return Ok(userViewModel);
+        }
+
+        [HttpPut]
+        public IActionResult Update([FromBody] UserInputModel userInputModel)
+        {
+            var userViewModel = _userBusiness.Update(userInputModel);
+            return Ok(userViewModel);
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult Delete([FromRoute] int id)
+        {
+            if (!_userBusiness.Delete(id)) return BadRequest("Não foi possível remover");
+            return NoContent();
         }
     }
 }

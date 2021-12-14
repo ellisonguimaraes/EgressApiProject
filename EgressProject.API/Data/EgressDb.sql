@@ -32,15 +32,15 @@ CREATE TABLE "Person"(
     "id" SERIAL NOT NULL,
     "cpf" VARCHAR(20) NOT NULL,
     "name" VARCHAR(150) NOT NULL,
-    "birth_date" DATE NOT NULL,
-    "sex" INTEGER NOT NULL,
-    "phone_number" VARCHAR(20) NOT NULL,
+    "birth_date" DATE,
+    "sex" INTEGER,
+    "phone_number" VARCHAR(20) ,
     "phone_number_2" VARCHAR(20) NULL,
     "perfil_image" VARCHAR(255) NULL,
     "expose_data" BOOLEAN NOT NULL,
-    "city" VARCHAR(50) NOT NULL,
-    "state" VARCHAR(50) NOT NULL,
-    "country" VARCHAR(50) NOT NULL
+    "city" VARCHAR(50),
+    "state" VARCHAR(50),
+    "country" VARCHAR(50) 
 );
 ALTER TABLE "Person" ADD PRIMARY KEY("id");
 ALTER TABLE "Person" ADD CONSTRAINT "person_cpf_unique" UNIQUE("cpf");

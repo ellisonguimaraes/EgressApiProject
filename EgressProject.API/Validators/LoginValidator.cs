@@ -9,12 +9,12 @@ namespace EgressProject.API.Validators
         {
             RuleFor(l => l.Email)
                 .EmailAddress().WithMessage("É necessário que seja um email")
-                .NotEmpty().WithMessage("O campo email precisar ser preenchido");
+                .NotEmpty().WithMessage("O campo Email não preenchido");
             
             RuleFor(l => l.Password)
                 .MinimumLength(8).WithMessage("Mínimo de 8 caracteres")
                 .MaximumLength(30).WithMessage("Máximo de 30 caracteres")
-                .NotEmpty().WithMessage("O campo senha precisar ser preenchido");
+                .NotEmpty().WithMessage("O campo Senha não preenchido");
         }        
     }
 }

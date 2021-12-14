@@ -13,6 +13,7 @@ namespace EgressProject.API.Data.Mapping
             builder.HasKey(em => em.Id);
 
             // Properties Configuration
+            builder.Property(em => em.Id).HasColumnName("id").IsRequired();
             builder.Property(em => em.Role).HasColumnName("role").HasMaxLength(100).IsRequired();
             builder.Property(em => em.Enterprise).HasColumnName("enterprise").HasMaxLength(100).IsRequired();
             builder.Property(em => em.Section).HasColumnName("section").HasMaxLength(100).IsRequired();
@@ -21,6 +22,7 @@ namespace EgressProject.API.Data.Mapping
             builder.Property(em => em.Status).HasColumnName("status").IsRequired();
             builder.Property(em => em.StartDate).HasColumnName("start_date").IsRequired();
             builder.Property(em => em.EndDate).HasColumnName("end_date").IsRequired();
+            builder.Property(em => em.PersonId).HasColumnName("person_id").IsRequired();
 
             // Relationship Configuration
             builder.HasOne(em => em.Person)

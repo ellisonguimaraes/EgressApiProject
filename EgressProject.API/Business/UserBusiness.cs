@@ -1,114 +1,61 @@
 using System;
+using System.Linq;
 using System.Text;
+using AutoMapper;
 using EgressProject.API.Business.Interfaces;
 using EgressProject.API.Models;
+using EgressProject.API.Models.Enums;
 using EgressProject.API.Models.InputModel;
 using EgressProject.API.Models.Utils;
+using EgressProject.API.Models.ViewModel;
 using EgressProject.API.Repositories.Interfaces;
-using EgressProject.API.Services.Auth;
 using System.Security.Cryptography;
-using EgressProject.API.Models.Enums;
 
 namespace EgressProject.API.Business
 {
     public class UserBusiness : IUserBusiness
     {
-        private readonly IAuthorizationRepository _authorizationRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IJwTUtils _jwtUtils;
-        private readonly TokenConfiguration _tokenConfiguration;
+        private readonly IMapper _mapper;
 
-        public UserBusiness(IUserRepository userRepository, 
-                            IAuthorizationRepository authorizationRepository, 
-                            IJwTUtils jwtUtils,
-                            TokenConfiguration tokenConfiguration)
+        public UserBusiness(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
-            _authorizationRepository = authorizationRepository;
-            _jwtUtils = jwtUtils;
-            _tokenConfiguration = tokenConfiguration;
+            _mapper = mapper;
         }
         
-        public Token Authenticate(Login login, string ipAddress)
+        public PagedList<UserViewModel> GetPaginate(PaginationParameters paginationParameters)
         {
-            User user = _userRepository.GetByLogin(login.Email, login.Password);
+            var usersPagedList = _userRepository.GetPaginate(paginationParameters);
 
-            if (user == null) return null;
+            PagedList<UserViewModel> usersViewModelPagedList = new PagedList<UserViewModel>(
+                usersPagedList.Select(_mapper.Map<User, UserViewModel>),
+                usersPagedList.CurrentPage,
+                usersPagedList.TotalPages,
+                usersPagedList.PageSize,
+                usersPagedList.TotalCount
+            );
 
-            Token token = _jwtUtils.GenerateToken(user);
-
-            Authorization authorization = new Authorization{
-                Token = token.AccessToken,
-                IpAddress = ipAddress,
-                CreatedDate = DateTime.Parse(token.CreatedDate),
-                RefreshToken = token.RefreshToken,
-                RefreshTokenExpiryTime = DateTime.Now.AddDays(_tokenConfiguration.DaysToExpiry),
-                IsValid = true,
-                UserId = user.Id
-            };
-            _authorizationRepository.Create(authorization);
-
-            return token;
+            return usersViewModelPagedList;
         }
 
-        public Token RefreshToken(Token token, string ipAddress)
+        public UserViewModel GetById(int id)
+            => _mapper.Map<User, UserViewModel>(_userRepository.GetById(id));
+
+        public UserViewModel Update(UserInputModel userInputModel)
         {
-            Authorization authorization = _authorizationRepository.GetByRefreshToken(token.RefreshToken);
+            User user = _userRepository.GetById(userInputModel.Id);
+            user.Id = userInputModel.Id;
+            user.Email = userInputModel.Email ?? user.Email;
+            user.IsValidated = userInputModel.IsValidated ?? user.IsValidated;
+            user.Password = (string.IsNullOrEmpty(userInputModel.Password)) ? user.Password
+                : BitConverter.ToString(new SHA256CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(userInputModel.Password)));
+            user.Role = string.IsNullOrEmpty(userInputModel.Role)? user.Role : Enum.Parse<Role>(userInputModel.Role);
+            user.PersonId = userInputModel.PersonId ?? user.PersonId;
 
-            if (authorization == null || authorization.RefreshTokenExpiryTime <= DateTime.Now || authorization.IsValid == false)
-                return null;
-
-            Token newToken = _jwtUtils.GenerateToken(authorization.User);
-
-            authorization.Token = newToken.AccessToken;
-            authorization.IpAddress = ipAddress;
-            authorization.CreatedDate = DateTime.Parse(newToken.CreatedDate);
-            authorization.RefreshToken = newToken.RefreshToken;
-            authorization.RefreshTokenExpiryTime = DateTime.Now.AddDays(_tokenConfiguration.DaysToExpiry);
-            authorization.IsValid = true;
-            authorization.UserId = authorization.User.Id;
-
-            _authorizationRepository.Update(authorization);
-
-            return newToken;
+            return _mapper.Map<User, UserViewModel>(_userRepository.Update(user));
         }
-
-        public bool RevokeToken(Token token)
-        {
-            Authorization authorization = _authorizationRepository.GetByRefreshToken(token.RefreshToken);
-
-            if (authorization == null)
-                return false;
-
-            authorization.IsValid = false;
-            _authorizationRepository.Update(authorization);
             
-            return true;
-        }
-        
-        public User Register(RegisterInputModel registerInputModel)
-        {
-            if(_userRepository.GetByEmail(registerInputModel.Email) != null) return null;
-
-            User user = _userRepository.Create(new User{
-                Email = registerInputModel.Email,
-                Password = BitConverter.ToString(new SHA256CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(registerInputModel.Password))),
-                Role = Role.Egress,
-                IsValidated = true
-            });
-
-            return user;
-        }
-
-        public PagedList<User> GetPaginate(PaginationParameters paginationParameters)
-            => _userRepository.GetPaginate(paginationParameters);
-
-        public User GetById(int id)
-            => _userRepository.GetById(id);
-
-        public User Update(User user)
-            => _userRepository.Update(user);
-
         public bool Delete(int id)
             => _userRepository.Delete(id);
     }
